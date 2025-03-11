@@ -5,6 +5,10 @@ const SALT_WORK_FACTOR = 10;
 const EMAIL_PATTERN = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const DNI_PATTERN = /^[0-9]{8}[A-Za-z]$/;
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '')
+.split(',')
+.map(email => email.trim().toLowerCase());
+
 
 const userSchema = new Schema({
     fullname: {
@@ -81,8 +85,13 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'associate', 'guess'],
-        default: 'guess'
+        enum: ['admin', 'member'],
+        default: 'member',
+    },
+    active:{
+        type: Boolean,
+        default: false,
+        //TODO: implement an activation by email.
     },
     adress: {
         country: {
@@ -142,6 +151,11 @@ const userSchema = new Schema({
     });
 
 userSchema.pre('save', function (next) {
+
+    if (ADMIN_EMAILS.includes(this.email)) {
+        this.role = 'admin';
+    }
+
     if (this.isModified('password')) {
         bcrypt.hash(this.password, SALT_WORK_FACTOR)
             .then(hash => {
@@ -154,8 +168,8 @@ userSchema.pre('save', function (next) {
     }
 });
 
-userSchema.methods.checkPassword = function (passwordtoCheck) {
-    return bcrypt.compare(passwordtoCheck, this.password);
+userSchema.methods.checkPassword = function (passwordToCheck) {
+    return bcrypt.compare(passwordToCheck, this.password);
 };
 
 module.exports = model('User', userSchema);

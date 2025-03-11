@@ -15,7 +15,6 @@ module.exports.create = ((req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         birthday: req.body.birthday,
-        role: req.body.role,
     }
     User.create(newUser)
         .then(user => res.status(201).json(user))
