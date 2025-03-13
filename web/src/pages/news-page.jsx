@@ -1,17 +1,19 @@
+import newsPicture from '../assets/NewsPicture.jpg'
+import Soon from '../components/soon';
 
 function NewsPage() {
     return (
         <>
-    
-        <div className="w-[25vw] border-2 border-red-600 h-[15vh]">
-            Noticias
-        </div>
-        <div className="w-full border-2 border-red-600 h-[25vh]">
-            Última Noticia
-        </div>
-        <div className="w-full border-2 border-red-600 h-[50vh]">
-            Penúltima Noticia
-        </div>
+            <div className="max-h-screen overflow-hidden">
+                <div>
+                    <img 
+                    className="max-w-screen"
+                    src={newsPicture} alt="" />
+                </div>
+                <div className="relative ml-2 z-10 top-[-110vh]">
+                    <Soon className="text-white"/>
+                </div>
+            </div>
         </>
     )
 }
